@@ -26,7 +26,8 @@ def main():
         cost_dense4d = 0.3 * tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=dense4d,labels=y))
         cost = cost_dense1 + cost_dense4a + cost_dense4d
 
-        optimizer = tf.train.MomentumOptimizer(learning_rate=learning_rate, momentum=0.9).minimize(cost)
+        # optimizer = tf.train.MomentumOptimizer(learning_rate=learning_rate, momentum=0.9).minimize(cost)
+        optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
         prediction = tf.to_int32(tf.argmax(dense1,1))
         correct_prediction = tf.equal(prediction,y)
@@ -38,16 +39,21 @@ def main():
         enque_train_data_process1.start()
 
         sess.run(tf.global_variables_initializer())
+        # print(np.sum([np.prod(v.get_shape().as_list()) for v in tf.trainable_variables()]))
         saver = tf.train.Saver(max_to_keep=None)
-        # saver.restore(sess, "cnn_latest")
-        saver_iter = 10000
+        saver.restore(sess, "outputs/cnn_latest")
+        saver_iter = 1000
+        train_acc = 0
+        train_loss = 100000
         i = 0
         while True:
             train_data_batch, train_label_batch = train_data_q.get()
-            sess.run(optimizer, feed_dict = {x:train_data_batch, y:train_label_batch, learning_rate: 0.0001, is_training:True})
+            _, train_loss = sess.run([optimizer, cost], feed_dict = {x:train_data_batch, y:train_label_batch, learning_rate: 0.001, is_training:True})
+            print("Iteration:", i)
+            print("     Training loss:", train_loss, "Last acc:", train_acc)
 
-            if i % saver_iter == 0:
-                train_loss, train_acc = sess.run([cost, accuracy], feed_dict = {x:train_data_batch, y:train_label_batch, is_training:False})
+            if (i % saver_iter == 0) and (i != 0):
+                train_acc = sess.run(accuracy, feed_dict = {x:train_data_batch, y:train_label_batch, is_training:False})
                 saver.save(sess, "outputs/cnn_latest", global_step=None)
                 print(train_loss, train_acc)
                 print("checkpoint saved")
