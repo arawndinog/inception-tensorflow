@@ -39,7 +39,7 @@ def main():
 
         sess.run(tf.global_variables_initializer())
         saver = tf.train.Saver(max_to_keep=None)
-        saver.restore(sess, "cnn_latest")
+        # saver.restore(sess, "cnn_latest")
         saver_iter = 10000
         i = 0
         while True:
