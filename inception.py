@@ -20,7 +20,7 @@ def inception1_block(x: tf.Tensor,
         conv3_reduce = tf.nn.bias_add(tf.nn.conv2d(x, W_conv3_reduce, strides=[1, 1, 1, 1], padding='SAME'), b_conv3_reduce)
         conv3_reduce_active = tf.nn.relu(conv3_reduce)
         # 3x3 conv
-        W_conv3 = tf.Variable(tf.truncated_normal([1, 1, conv3_reduce_filters, conv3_filters], stddev=0.1), name="weights")
+        W_conv3 = tf.Variable(tf.truncated_normal([3, 3, conv3_reduce_filters, conv3_filters], stddev=0.1), name="weights")
         b_conv3 = tf.Variable(tf.constant(value=0.1, shape=[conv3_filters]), name='bias')
         conv3 = tf.nn.bias_add(tf.nn.conv2d(conv3_reduce_active, W_conv3, strides=[1, 1, 1, 1], padding='SAME'), b_conv3)
         conv3_active = tf.nn.relu(conv3)
@@ -31,7 +31,7 @@ def inception1_block(x: tf.Tensor,
         conv5_reduce = tf.nn.bias_add(tf.nn.conv2d(x, W_conv5_reduce, strides=[1, 1, 1, 1], padding='SAME'), b_conv5_reduce)
         conv5_reduce_active = tf.nn.relu(conv5_reduce)
         # 5x5 conv
-        W_conv5 = tf.Variable(tf.truncated_normal([1, 1, conv5_reduce_filters, conv5_filters], stddev=0.1), name="weights")
+        W_conv5 = tf.Variable(tf.truncated_normal([5, 5, conv5_reduce_filters, conv5_filters], stddev=0.1), name="weights")
         b_conv5 = tf.Variable(tf.constant(value=0.1, shape=[conv5_filters]), name='bias')
         conv5 = tf.nn.bias_add(tf.nn.conv2d(conv5_reduce_active, W_conv5, strides=[1, 1, 1, 1], padding='SAME'), b_conv5)
         conv5_active = tf.nn.relu(conv5)
