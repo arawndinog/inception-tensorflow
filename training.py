@@ -47,8 +47,9 @@ def main():
         sess.run(tf.global_variables_initializer())
         # print(np.sum([np.prod(v.get_shape().as_list()) for v in tf.trainable_variables()]))
         saver = tf.train.Saver(max_to_keep=None)
-        # saver.restore(sess, "outputs/cnn_latest")
+        saver.restore(sess, "outputs/cnn_latest")
         saver_iter = 5000
+        learning_rate_current = 0.0001
 
         train_acc = 0
         train_loss = 100000
@@ -58,9 +59,9 @@ def main():
         i = 0
         while True:
             train_data_batch, train_label_batch = train_data_q.get()
-            _, train_loss = sess.run([optimizer, cost], feed_dict = {x:train_data_batch, y:train_label_batch, learning_rate: 0.001, is_training:True})
+            _, train_loss = sess.run([optimizer, cost], feed_dict = {x:train_data_batch, y:train_label_batch, learning_rate: learning_rate_current, is_training:True})
             print("Iteration:", i)
-            print("     Training loss:", train_loss, "Last training acc:", train_acc, "Last test acc:", test_acc) #, "Learning rate:", learning_rate)
+            print("     Training loss:", train_loss, "Last training acc:", train_acc, "Last test acc:", test_acc, "Learning rate:", learning_rate_current)
 
             if (i % saver_iter == 0) and (i != 0):
                 train_acc = sess.run(accuracy, feed_dict = {x:train_data_batch, y:train_label_batch, is_training:False})
@@ -76,10 +77,10 @@ def main():
                     test_acc_list.append(test_batch_acc)
                 test_acc = sum(test_acc_list)/len(test_acc_list)
                 # if best performing, reduce learning rate
-                # if test_acc >= max_acc:
-                #     learning_rate = max(1e-10, learning_rate*0.1)
-                #     max_acc = test_acc
-                #     saver.save(sess, "outputs/cnn_besttest", global_step=None)
+                if test_acc >= max_acc:
+                    learning_rate_current = max(1e-10, learning_rate_current*0.1)
+                    max_acc = test_acc
+                    saver.save(sess, "outputs/cnn_besttest", global_step=None)
 
                 saver.save(sess, "outputs/cnn_latest", global_step=None)
                 print(train_loss, train_acc, test_acc)
