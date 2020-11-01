@@ -6,16 +6,10 @@ from utils import process_dataset, process_image
 from multiprocessing import Queue, Process
 
 def main():
-    train_data, train_label = process_dataset.extract_hdf5("/home/adrianwong/Projects/ML_localdata/Dataset/HDF5/CASIA_SC_L_A_label_00000_03880.hdf5")
-    train_indices_partial = train_label < 1000
-    train_data = train_data[train_indices_partial]
-    train_label = train_label[train_indices_partial]
+    train_data, train_label = process_dataset.extract_hdf5("outputs/casia1000_train.hdf5", False)
     batch_size = 100
 
-    test_data, test_label = process_dataset.extract_hdf5("/home/adrianwong/Projects/ML_localdata/Dataset/HDF5/CASIA_SC_C_0.hdf5")
-    test_indices_partial = test_label < 1000
-    test_data = test_data[test_indices_partial]
-    test_label = test_label[test_indices_partial]
+    test_data, test_label = process_dataset.extract_hdf5("outputs/casia1000_test.hdf5", False)
     test_data = process_image.reshape_img_batch_to_size(test_data, (224,224))
 
     sess_config = tf.ConfigProto()

@@ -49,7 +49,7 @@ def aggressive_crop(img):
             img_minicrop_2 = img_crop[-224:, :224]
             img_minicrop_3 = img_crop[:224, -224:]
             img_minicrop_4 = img_crop[-224:, -224:]
-            img_minicrop_5 = img_crop[img_crop.shape[0]//2-224//2:img_crop.shape[0]//2-224//2+224:img_crop.shape[1]//2-224//2:img_crop.shape[1]//2-224//2+224]
+            img_minicrop_5 = img_crop[img_crop.shape[0]//2-224//2:img_crop.shape[0]//2-224//2+224,img_crop.shape[1]//2-224//2:img_crop.shape[1]//2-224//2+224]
             img_crop_resized = cv2.resize(img_crop, (224,224), interpolation = cv2.INTER_CUBIC)
             img_minicrop_1_flipped = cv2.flip(img_minicrop_1, 1)
             img_minicrop_2_flipped = cv2.flip(img_minicrop_2, 1)
