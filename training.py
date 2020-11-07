@@ -7,10 +7,8 @@ from multiprocessing import Queue, Process
 
 def main():
     train_data, train_label = process_dataset.extract_hdf5("outputs/casia1000_train.hdf5", False)
-    batch_size = 100
-
     test_data, test_label = process_dataset.extract_hdf5("outputs/casia1000_test.hdf5", False)
-    test_data = process_image.reshape_img_batch_to_size(test_data, (224,224))
+    batch_size = 100
 
     sess_config = tf.ConfigProto()
     sess_config.gpu_options.allow_growth = True
@@ -39,9 +37,11 @@ def main():
         enque_train_data_process1.start()
 
         sess.run(tf.global_variables_initializer())
+        # for v in tf.trainable_variables():
+        #     print(v, np.prod(v.get_shape().as_list()))
         # print(np.sum([np.prod(v.get_shape().as_list()) for v in tf.trainable_variables()]))
         saver = tf.train.Saver(max_to_keep=None)
-        saver.restore(sess, "outputs/cnn_latest")
+        # saver.restore(sess, "outputs/cnn_latest")
         saver_iter = 5000
         learning_rate_current = 0.0001
 
@@ -66,6 +66,7 @@ def main():
                 while test_i < len(test_data):
                     test_data_batch = test_data[test_i: test_i + batch_size]
                     test_label_batch = test_label[test_i: test_i + batch_size]
+                    test_data_batch = process_image.reshape_img_batch_to_size(test_data_batch, (224,224))
                     test_batch_acc = sess.run(accuracy, feed_dict = {x:test_data_batch, y:test_label_batch, is_training:False})
                     test_i += batch_size
                     test_acc_list.append(test_batch_acc)
