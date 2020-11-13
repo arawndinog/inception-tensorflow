@@ -1,5 +1,5 @@
 import tensorflow as tf
-# last update 20201023
+# last update 20201108
 
 def inception1_block(x: tf.Tensor, 
                     input_filters=192,
